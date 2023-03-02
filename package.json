@@ -1,0 +1,54 @@
+{
+  "name": "@squareboat/nestjs-logger",
+  "version": "0.0.1",
+  "description": "A simplified winston logger for your NestJS Applications",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "keywords": [
+    "nestjs",
+    "winston",
+    "nestjs-logger",
+    "nestjs-winston"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/squareboat/nestjs-logger.git"
+  },
+  "bugs": {
+    "url": "https://github.com/squareboat/nestjs-logger/issues"
+  },
+  "homepage": "https://github.com/squareboat/nestjs-logger",
+  "author": "Neha Negi <nehanegi220682@gmail.com>",
+  "private": false,
+  "license": "MIT",
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.json",
+    "format": "prettier --write \"**/*.ts\"",
+    "lint": "eslint 'lib/**/*.ts' --fix",
+    "prepublish:npm": "npm run build",
+    "publish:npm": "npm publish --access public",
+    "prepublish:next": "npm run build",
+    "publish:next": "npm publish --access public --tag next",
+    "test": "jest --config=jest.json",
+    "test:cov": "jest --config=jest.json --coverage",
+    "test:e2e": "jest --config ./tests/jest-e2e.json --runInBand",
+    "test:e2e:dev": "jest --config ./tests/jest-e2e.json --runInBand --watch"
+  },
+  "devDependencies": {
+    "@nestjs/common": "^9.0.3",
+    "@nestjs/core": "^9.0.3",
+    "reflect-metadata": "^0.1.13",
+    "typescript": "^4.9.5"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^7.0.0 || ^8.0.0 || ^9.0.0",
+    "@nestjs/core": "^7.0.0 || ^8.0.0 || ^9.0.0",
+    "@squareboat/nest-console": "^1.1.1",
+    "reflect-metadata": "^0.1.13"
+  },
+  "dependencies": {
+    "@squareboat/nest-console": "^1.1.1",
+    "@types/node": "^18.14.4",
+    "winston": "^3.8.2"
+  }
+}
