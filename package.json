@@ -1,6 +1,6 @@
 {
   "name": "@squareboat/nestjs-logger",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A simplified winston logger for your NestJS Applications",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
