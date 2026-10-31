@@ -47,13 +47,16 @@ export class LoggerService {
   }
 
   static createLogger(conn: string) {
-    let options = LoggerService.config.loggers[conn]
+    const options = LoggerService.config.loggers[conn]
+    // `transports` may be one transport, an array or missing
+    const configured = options.transports
+    let transports: TransportStream[] =
+      configured === undefined ? [] : Array.isArray(configured) ? configured : [configured]
+
     if (LoggerService.config.disableConsole) {
-      let transports = options.transports as TransportStream[]
-      options.transports = transports.filter(
-        (transport) => !isConsoleTransport(transport)
-      )
+      transports = transports.filter((transport) => !isConsoleTransport(transport))
     }
-    return winston.createLogger(options as any)
+
+    return winston.createLogger({ ...options, transports })
   }
 }
