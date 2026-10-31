@@ -4,6 +4,18 @@ import winston from 'winston'
 import { LoggerConstants } from './constant'
 import TransportStream from 'winston-transport'
 
+/**
+ * Console transports are matched by name, not with `instanceof`: an app that
+ * pins another winston version has its own copy of the Console class.
+ */
+function isConsoleTransport(transport: any): boolean {
+  return (
+    transport instanceof winston.transports.Console ||
+    transport?.name === 'console' ||
+    transport?.constructor?.name === 'Console'
+  )
+}
+
 @Injectable()
 export class LoggerService {
   private static config: SqbLoggerOptions
@@ -39,7 +51,7 @@ export class LoggerService {
     if (LoggerService.config.disableConsole) {
       let transports = options.transports as TransportStream[]
       options.transports = transports.filter(
-        (transport) => !(transport instanceof winston.transports.Console)
+        (transport) => !isConsoleTransport(transport)
       )
     }
     return winston.createLogger(options as any)
