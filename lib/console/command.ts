@@ -32,10 +32,8 @@ export class LoggerConsoleCommands {
     const logsDir = path.join(process.cwd(), 'log');
     const zipDir = path.join(logsDir, 'zip');
 
-    // Create the zip directory if it doesn't exist
-    if (!fs.existsSync(zipDir)) {
-      fs.mkdirSync(zipDir);
-    }
+    // Create the log and zip directories if they don't exist
+    fs.mkdirSync(zipDir, { recursive: true });
 
     // Read all .log files in the logs directory
     const logFiles = fs.readdirSync(logsDir).filter((file) => {

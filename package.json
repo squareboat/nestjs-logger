@@ -1,9 +1,12 @@
 {
   "name": "@squareboat/nestjs-logger",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "A simplified winston logger for your NestJS Applications",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "keywords": [
     "nestjs",
     "winston",
@@ -18,7 +21,7 @@
     "url": "https://github.com/squareboat/nestjs-logger/issues"
   },
   "homepage": "https://github.com/squareboat/nestjs-logger",
-  "author": "Neha Negi <nehanegi220682@gmail.com>",
+  "author": "Squareboat <hi@squareboat.com>",
   "private": false,
   "license": "MIT",
   "scripts": {
@@ -32,24 +35,28 @@
     "test": "jest --config=jest.json",
     "test:cov": "jest --config=jest.json --coverage",
     "test:e2e": "jest --config ./tests/jest-e2e.json --runInBand",
-    "test:e2e:dev": "jest --config ./tests/jest-e2e.json --runInBand --watch"
+    "test:e2e:dev": "jest --config ./tests/jest-e2e.json --runInBand --watch",
+    "prepublishOnly": "npm run build"
   },
   "devDependencies": {
-    "@nestjs/common": "^9.0.3",
-    "@nestjs/core": "^9.0.3",
-    "reflect-metadata": "^0.1.13",
-    "typescript": "^4.9.5"
+    "@nestjs/common": "^12.3.2",
+    "@nestjs/core": "^12.3.2",
+    "@types/node": "^20.19.43",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2",
+    "typescript": "^6.0.3"
   },
   "peerDependencies": {
-    "node": "^14.0.0",
-    "@nestjs/common": "^7.0.0 || ^8.0.0 || ^9.0.0",
-    "@nestjs/core": "^7.0.0 || ^8.0.0 || ^9.0.0",
-    "@squareboat/nest-console": "^1.1.1",
-    "reflect-metadata": "^0.1.13"
+    "@nestjs/common": "^10.0.0 || ^11.0.0 || ^12.0.0",
+    "@nestjs/core": "^10.0.0 || ^11.0.0 || ^12.0.0",
+    "@squareboat/nest-console": "^2.0.0",
+    "reflect-metadata": "^0.1.13 || ^0.2.0"
   },
   "dependencies": {
-    "@squareboat/nest-console": "^1.1.1",
-    "@types/node": "^18.14.4",
-    "winston": "^3.8.2"
+    "@squareboat/nest-console": "^2.0.0",
+    "winston": "^3.19.0"
+  },
+  "engines": {
+    "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
   }
 }

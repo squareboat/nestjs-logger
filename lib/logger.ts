@@ -1,5 +1,9 @@
+import type { Logger as WinstonLogger } from 'winston';
 import { LoggerService } from './service';
 
-export function Logger(conn?: string) {
+/**
+ * Returns the winston logger registered under `conn` (the default logger when omitted).
+ */
+export function Logger(conn?: string): WinstonLogger {
   return LoggerService.getConnection(conn);
 }
