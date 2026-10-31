@@ -17,6 +17,7 @@ This package provides a NestJS logger wrapper around the Winston logger library.
     - [Recommended Way](#recommended-way)
   - [Knowing about Transports](#knowing-about-transports)
   - [Usage](#usage)
+  - [Shutdown](#shutdown)
   - [Available Commands](#available-commands)
   - [About Us](#about-us)
   - [License](#license)
@@ -75,6 +76,7 @@ export class AppModule {}
 Use `ConfigModule` provided by NestJS to load configurations. To learn about ConfigModule, [Click here.](https://docs.nestjs.com/techniques/configuration)
 
 ```typescript
+// config/logger.ts
 import { registerAs } from '@nestjs/config'
 import winston from 'winston'
 import path from 'path'
@@ -104,21 +106,24 @@ export default registerAs('logger', () => {
 })
 ```
 
-By setting `disbaleConsole` to true you can restrict your console logs to be printed in production or other enviroments.
+By setting `disableConsole` to true you can restrict your console logs to be printed in production or other enviroments.
 `Note that you can define multiple transports for the same logger`
 
 ### 2. Register Logger Module
 
 ```typescript
 import { Module } from '@nestjs/common'
-import { LoggerModule } from '@squareboat/nestjs-logger'
+import { ConfigModule, ConfigService } from '@nestjs/config'
+import { LoggerModule, SqbLoggerOptions } from '@squareboat/nestjs-logger'
+import logger from './config/logger'
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true, load: [logger] }),
     LoggerModule.registerAsync({
       isGlobal: true,
       imports: [ConfigModule],
-      useFactory: (config: ConfigService) => config.get('logger'),
+      useFactory: (config: ConfigService) => config.getOrThrow<SqbLoggerOptions>('logger'),
       inject: [ConfigService],
     }),
   ],
@@ -138,9 +143,9 @@ Transports are the mechanisms by which log messages are delivered to their inten
    The `Console` transport sends log messages to the console.
 
 ```typescript
-...
-    transports: [new winston.transports.Console()]
-...
+import winston from 'winston'
+
+const transports = [new winston.transports.Console()]
 ```
 
 2. File transport
@@ -148,30 +153,55 @@ Transports are the mechanisms by which log messages are delivered to their inten
    `It is recommended to create your log files inside the root directory under the 'log' folder.`
 
 ```typescript
-...
- transports: [
-     new winston.transports.File({
-        filename: path.join(process.cwd(), 'log', '/payments.log')
-    })
- ]
- ...
+import winston from 'winston'
+import path from 'path'
+
+const transports = [
+  new winston.transports.File({
+    filename: path.join(process.cwd(), 'log', 'payments.log'),
+  }),
+]
 ```
 
 ### Usage
 
 First import Logger from `@squareboat/nestjs-logger`
 
-```bash
-import { Logger } from '@squareboat/nestjs-logger';
+```typescript
+import { Logger } from '@squareboat/nestjs-logger'
 ```
 
 To use the logger named "payments" in your application and log an "info" level message, you can use the following code:
 
-```bash
-Logger('payments').info('Payment successful!!');
+```typescript
+Logger('payments').info('Payment successful!!')
 ```
 
+`Logger()` returns a `winston.Logger`; without a name it returns the `default` logger.
+
 To know more about other logging levels [refer here.](https://github.com/winstonjs/winston#logging-levels)
+
+### Shutdown
+
+When the app shuts down (`await app.close()`, or a signal with `app.enableShutdownHooks()`), the loggers are
+ended and shutdown waits until the transports have written every buffered line, so nothing is lost when the
+process exits. It waits at most `shutdownTimeout` milliseconds (default `5000`):
+
+```typescript
+import { LoggerModule } from '@squareboat/nestjs-logger'
+
+LoggerModule.register({
+  isGlobal: true,
+  default: 'app',
+  disableConsole: false,
+  shutdownTimeout: 10000,
+  loggers: { app: { level: 'info' } },
+})
+```
+
+Lines logged after the app has shut down are dropped. Transports are closed with their logger, so if you
+create several apps in one process (for example one per test), create the transports in a factory
+(`registerAsync` with `useFactory`, or `registerAs` as shown above) so every app gets new ones.
 
 ## Available Commands
 
