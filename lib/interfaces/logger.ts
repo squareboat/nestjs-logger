@@ -17,7 +17,7 @@ export interface SqbLoggerAsyncOptionsFactory {
 export interface SqbLoggerAsyncOptions extends Pick<ModuleMetadata, "imports"> {
   name?: string;
   isGlobal: boolean;
-  useExisting?: Type<SqbLoggerOptions>;
+  useExisting?: Type<SqbLoggerAsyncOptionsFactory>;
   useClass?: Type<SqbLoggerAsyncOptionsFactory>;
   useFactory?: (...args: any[]) => Promise<SqbLoggerOptions> | SqbLoggerOptions;
   inject?: any[];

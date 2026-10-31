@@ -29,11 +29,12 @@ export class LoggerModule {
     return {
       global: options.isGlobal || false,
       module: LoggerModule,
-      imports: [],
+      imports: [...(options.imports || [])],
       providers: [
         LoggerService,
         LoggerConsoleCommands,
         this.createLoggerOptions(options),
+        ...(options.useClass ? [{ provide: options.useClass, useClass: options.useClass }] : []),
       ],
     };
   }
@@ -50,7 +51,7 @@ export class LoggerModule {
     }
 
     const inject = [
-      (options.useClass || options.useExisting) as Type<SqbLoggerOptions>,
+      (options.useClass || options.useExisting) as Type<SqbLoggerAsyncOptionsFactory>,
     ];
 
     return {
