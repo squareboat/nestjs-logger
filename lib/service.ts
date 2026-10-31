@@ -1,6 +1,6 @@
 import { Inject, Injectable, OnApplicationShutdown } from '@nestjs/common'
 import { SqbLoggerOptions } from './interfaces'
-import winston from 'winston'
+import winston, { Logger as WinstonLogger } from 'winston'
 import { LoggerConstants } from './constant'
 import TransportStream from 'winston-transport'
 
@@ -44,7 +44,7 @@ function fileWritten(transport: any): Promise<void> {
  * Ends a logger and waits until its transports have written everything,
  * for at most `timeoutMs`.
  */
-async function endLogger(logger: winston.Logger, timeoutMs: number): Promise<void> {
+async function endLogger(logger: WinstonLogger, timeoutMs: number): Promise<void> {
   const transports = logger.transports.slice()
   // Console transports write synchronously, so there is nothing to flush. Detach
   // them instead of ending them: they keep working if the same options are used
@@ -77,8 +77,8 @@ async function endLogger(logger: winston.Logger, timeoutMs: number): Promise<voi
 @Injectable()
 export class LoggerService implements OnApplicationShutdown {
   private static config: SqbLoggerOptions
-  private static options: any = {}
-  private readonly loggers: winston.Logger[] = []
+  private static options: Record<string, WinstonLogger> = {}
+  private readonly loggers: WinstonLogger[] = []
 
   constructor(
     @Inject(LoggerConstants.loggerOptions) readonly config: SqbLoggerOptions
@@ -101,7 +101,7 @@ export class LoggerService implements OnApplicationShutdown {
     await Promise.all(this.loggers.map((logger) => endLogger(logger, timeout)))
   }
 
-  static getConnection(conn?: string) {
+  static getConnection(conn?: string): WinstonLogger {
     conn = conn || LoggerService.config.default
     const availableLoggers = Object.keys(LoggerService.options)
     if (!availableLoggers.includes(conn as string)) {
@@ -117,7 +117,7 @@ export class LoggerService implements OnApplicationShutdown {
     return connection
   }
 
-  static createLogger(conn: string) {
+  static createLogger(conn: string): WinstonLogger {
     const options = LoggerService.config.loggers[conn]
     // `transports` may be one transport, an array or missing
     const configured = options.transports
